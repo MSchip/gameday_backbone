@@ -67,7 +67,6 @@ var getGames = function( date ) {
   // Create a pathname form the given date
   var gameIds = [];
   var dateString = makeDate( date ) + 'master_scoreboard.json';
-  console.log( dateString );
 
   // Extend the base url with the created pathname
   var gamesUrl = makeUrl( dateString );
@@ -78,17 +77,35 @@ var getGames = function( date ) {
     get( gamesUrl )
     .then( function( results ) {
       var gamesArray = JSON.parse( results ).data.games.game;
+
+      // TODO: move to client side and return data
       gamesArray.forEach( function( value ) {
         gameIds.push( 'gid_' + value.gameday );
       });
-      
       resolve( gameIds );
+
     })
     .catch( function( error ) {
       console.log( 'error in gameday request: ', error );
       reject( error );
     })
   })
+};
+
+var getGameBox = function( date, gid ) {
+  var gameBox = makeDate( date ) + gid + '/boxscore.json';
+  
+  return new Promise( function( resolve, reject ) {
+    get( gameBox )
+    .then( function( results ) {
+      resolve( results );
+    })
+    .catch( function( error ) {
+      console.log( 'error in gameday request: ', error );
+      reject( error );
+    })
+  })
+
 };
 
 
