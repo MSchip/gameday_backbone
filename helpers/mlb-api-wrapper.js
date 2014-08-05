@@ -111,4 +111,5 @@ var getGameBox = function( date, gid ) {
 
 module.exports = {
   getGames: getGames,
+  getGameBox: getGameBox
 }
