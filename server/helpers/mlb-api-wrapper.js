@@ -63,53 +63,102 @@ var get = function( requestUrl ) {
 // Get games by date ( Date() )
 // Returning an array of gid's
 var getGames = function( date ) {
-
+  date = date ? date : new Date();
   // Create a pathname form the given date
   var gameIds = [];
-  var dateString = makeDate( date ) + 'master_scoreboard.json';
+  var dateString = makeDate( date ) + '/miniscoreboard.json';
 
   // Extend the base url with the created pathname
   var gamesUrl = makeUrl( dateString );
-
   // Make a GET request for the games with the given date
-  // Returns a promise
   return new Promise( function( resolve, reject ) {
     get( gamesUrl )
     .then( function( results ) {
       var gamesArray = JSON.parse( results ).data.games.game;
 
       // TODO: move to client side and return data
-      gamesArray.forEach( function( value ) {
-        gameIds.push( 'gid_' + value.gameday );
-      });
-      resolve( gameIds );
-
+      // gamesArray.forEach( function( value ) {
+      //   gameIds.push( 'gid_' + value.gameday );
+      // });
+      resolve( gamesArray )
     })
     .catch( function( error ) {
       console.log( 'error in gameday request: ', error );
-      reject( error );
+      reject( error )
     })
   })
 };
 
-var getGameBox = function( date, gid ) {
-  var gameBox = makeDate( date ) + gid + '/boxscore.json';
+var gameData = function( date, gid, type ) {
+
+  var category = {
+    box: '/boxscore.json',
+    plays: '/plays.json',
+    events: '/game_events.json'
+  }
+
+  // Default to box if no type is given
+  type = type ? category[ type ] : category[ 'mini' ];
+
+  var findUrl = makeUrl( makeDate( date ) + gid + type );
   
   return new Promise( function( resolve, reject ) {
-    get( gameBox )
+    get( findUrl )
     .then( function( results ) {
-      resolve( results );
+      resolve( results )
     })
     .catch( function( error ) {
       console.log( 'error in gameday request: ', error );
-      reject( error );
+      reject( error )
     })
-  })
+  });
 
 };
 
+// var gameBox = function( date, gid ) {
+//   return new Promise( function( resolve, reject ) {
+//     gameStats( date, gid, '/boxscore.json')
+//     .then( function( results ) {
+//       resolve( results );
+//     })
+//     .catch( function( error ) {
+//       console.log( 'error in gameday request' );
+//       reject( error );
+//     })
+//   });
+// };
+
+// var gamePlays = function( date, gid ) {
+//   return new Promise( function( resolve, reject ) {
+//     gameStats( date, gid, '/plays.json' )
+//     .then( function( results ) {
+//       resolve( results );
+//     })
+//     .catch( function( error ) {
+//       console.log( 'error in gameday request' );
+//       reject( error );
+//     })
+//   });
+// };
+
+// var gameEvents = function( date, gid ) {
+//   return new Promise( function( resolve, reject ) {
+//     gameStats( date, gid, '/game_events.json' )
+//     .then( function( results ) {
+//       resolve( results );
+//     })
+//     .catch( function( error ) {
+//       console.log( 'error in gameday request' );
+//       reject( error );
+//     })
+//   });
+// };
 
 module.exports = {
+  get: get,
   getGames: getGames,
-  getGameBox: getGameBox
+  gameData: gameData
+  // gameBox: gameBox,
+  // gamePlays: gamePlays,
+  // gameEvents: gameEvents
 }
