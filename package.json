@@ -19,6 +19,7 @@
     "gulp": "^3.8.7",
     "gulp-concat": "^2.3.4",
     "gulp-plumber": "^0.6.4",
+    "jadeify": "^2.5.0",
     "vinyl-source-stream": "^0.1.1"
   },
   "description": "gameday_backbone",

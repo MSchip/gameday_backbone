@@ -1,7 +1,7 @@
 
 var AppController = require( './controller.js');
 
-var app = new Marionette.Application();
+var app = new Backbone.Marionette.Application();
 
 app.addRegions({
   main: '#main',

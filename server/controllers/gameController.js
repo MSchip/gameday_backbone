@@ -3,9 +3,16 @@ var mlb = require('../helpers/mlb-api-wrapper.js');
 var getGames = function( req, res ) {
 
   if( req.params.year ) {
-    var year = req.params.year;
-    var month = req.params.month;
-    var day = req.params.day;
+    var date = new Date();
+    if( req.params.year === undefined ) {
+      var year = req.params.year;
+      var month = req.params.month;
+      var day = req.params.day;
+    } else {
+      var year = date.getFullYear();
+      var month = date.getMonth();
+      var day = date.getDate();  
+    }
 
     mlb.getGames( new Date( month + '-' + day + '-' + year ) )
     .then( function( results ) {

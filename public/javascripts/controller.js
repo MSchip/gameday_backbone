@@ -1,10 +1,14 @@
 
-
+var Games = require( './collections/games-collection.js' );
 
 var AppController = Marionette.Controller.extend({
   initialize: function( options ) {
     // Make sideGames Collection
-    
+    var games = new Games({});
+    games.fetch().then( function( results ) {
+      // Show Composite view with collecion
+      
+    });
   },
 
   home: function() {

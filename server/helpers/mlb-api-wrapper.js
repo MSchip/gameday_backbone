@@ -66,24 +66,21 @@ var getGames = function( date ) {
   date = date ? date : new Date();
   // Create a pathname form the given date
   var gameIds = [];
-  var dateString = makeDate( date ) + '/miniscoreboard.json';
+  var dateString = makeDate( date ) + 'miniscoreboard.json';
 
   // Extend the base url with the created pathname
   var gamesUrl = makeUrl( dateString );
+  console.log( 'url: ', gamesUrl )
   // Make a GET request for the games with the given date
   return new Promise( function( resolve, reject ) {
     get( gamesUrl )
     .then( function( results ) {
       var gamesArray = JSON.parse( results ).data.games.game;
 
-      // TODO: move to client side and return data
-      // gamesArray.forEach( function( value ) {
-      //   gameIds.push( 'gid_' + value.gameday );
-      // });
       resolve( gamesArray )
     })
     .catch( function( error ) {
-      console.log( 'error in gameday request: ', error );
+      console.log( 'error in games gameday request: ', error );
       reject( error )
     })
   })
