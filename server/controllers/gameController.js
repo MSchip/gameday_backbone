@@ -1,57 +1,70 @@
-var mlb = require('../helpers/mlb-api-wrapper.js');
+var gameday = require('gameday-helper');
 
-var getGames = function( req, res ) {
-
-  if( req.params.year ) {
-    var date = new Date();
-    if( req.params.year === undefined ) {
-      var year = req.params.year;
-      var month = req.params.month;
-      var day = req.params.day;
-    } else {
-      var year = date.getFullYear();
-      var month = date.getMonth();
-      var day = date.getDate();  
-    }
-
-    mlb.getGames( new Date( month + '-' + day + '-' + year ) )
-    .then( function( results ) {
-      res.send( results );
-    }) 
-    .catch( function( error ) {
-      console.log( error )
-    })
+var makeDate = function( req ) {
+  var date;
+  if( req.params.year === undefined ) {
+    date = new Date();
   } else {
-    mlb.getGames()
-    .then( function( results ) {
-      res.send( results );
-    })
-    .catch( function( error ) {
-    console.log( error )
-    })
+    var year = req.params.year;
+    var month = req.params.month;
+    var day = req.params.day;
+    date = new Date( month + '-' + day + '-' + year );
   }
+  return date;
+}
+
+var listGames = function( req, res ) {
+
+  var date = makeDate( req );
+
+  gameday.listGameIds( date )
+  .then( function( results ) {
+    res.send( results );
+  }) 
+  .catch( function( error ) {
+    console.log( error )
+  });
+  
 };
 
-var getStats = function( req, res ) {
-  var opts = req.params
-  var year = opts.year;
-  var month = opts.month;
-  var day = opts.day;
-  var gid = opts.gid;
-  var type = opts.type ? opts.type : 'box';
-  var date = new Date( month + '-' + day + '-' + year )
+var scoreboard = function( req, res ) {
+  
+  var date = makeDate( req );
 
-  mlb.gameData( date, gid, type )
+  gameday.miniScoreboard( date )
   .then( function( results ) {
     res.send( results );
   })
   .catch( function( error ) {
     console.log( error )
+  });
+
+};
+
+var gameType = function( req, res ) {
+
+  var date = makeDate( req );
+  var options = [ 'boxscore', 'events', 'feed', 'linescore', 'plays' ];
+  
+  type = req.params.type || 'boxscore';
+
+  if( options.indexOf( type ) === -1 ) {
+    res.status( 400 ).send( 'Not a valid type' );
+  }
+
+  gameday[ type ]( req.params.gid )
+  .then( function( results ) {
+    res.send( results );
   })
-}
+  .catch( function( error ) {
+    console.log( error );
+  });
+
+};
 
 
 module.exports = {
-  getGames: getGames,
-  getStats: getStats
+  listGames: listGames,
+  scoreboard: scoreboard,
+  gameType: gameType
 }

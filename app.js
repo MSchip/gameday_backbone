@@ -26,7 +26,7 @@ router.get('/', function(req, res){
 });
 
 app.use( '/', router );
-app.use( '/games', gamesRouter );
+app.use( '/api', gamesRouter );
 
 require( './server/routes/index.js' )( gamesRouter );
 
