@@ -46,13 +46,13 @@ var gameType = function( req, res ) {
   var date = makeDate( req );
   var options = [ 'boxscore', 'events', 'feed', 'linescore', 'plays' ];
   
-  type = req.params.type || 'boxscore';
+  var type = req.params.type || 'boxscore';
 
   if( options.indexOf( type ) === -1 ) {
     res.status( 400 ).send( 'Not a valid type' );
   }
 
-  gameday[ type ]( req.params.gid )
+  gameday[ type ]( req.params.id )
   .then( function( results ) {
     res.send( results );
   })
